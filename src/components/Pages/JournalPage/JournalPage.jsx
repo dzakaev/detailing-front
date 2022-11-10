@@ -1,5 +1,5 @@
 import React from 'react';
-import Journal from '../../Journale/Journal';
+import Journal from '../../Journal/Journal';
 import Header from '../../Header/Header';
 
 const JournalPage = () => {

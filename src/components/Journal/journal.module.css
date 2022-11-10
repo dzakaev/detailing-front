@@ -1,0 +1,28 @@
+.servSel {
+  width: 1070px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.inpStyle {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 20px 0;
+}
+.servSelect {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 20px 0;
+}
+.inputFormMain {
+  width: 1000px;
+  padding: 40px 0 0 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.content {
+  padding: 70px 0 0 20px;
+}
+.priceUnitMainBlock {
+  margin: 10px 0 0 50px;
+}

@@ -1,6 +1,10 @@
 const initialState = {
   materials: [],
   loading: false,
+  adding: false,
+  deleting: false,
+  editing: false,
+  admission: false,
 };
 
 export const materialReducer = (state = initialState, action) => {
@@ -8,36 +12,67 @@ export const materialReducer = (state = initialState, action) => {
     case "MATERIALS_LOAD/FULFILLED":
       return {
         ...state,
-        materials: {...state.materials, ...action.payload},
+        materials: action.payload.materials,
         loading: false,
       };
-    case "MATERIALS_LOAD/FULFILLED/REJECTED":
+    case "new_material/pending":
       return {
         ...state,
-        loading: false,
+        adding: true,
+      };
+    case "NEW_MATERIAL/fulfilled":
+      return {
+        ...state,
+        adding: false,
+        materials: [action.payload.material, ...state.materials],
+      };
+    case "delete_material/pending":
+      return {
+        ...state,
+        deleting: true,
+      };
+    case "DELETE_MATERIAL/fulfilled":
+      return {
+        ...state,
+        deleting: false,
+        materials: state.materials.filter(
+          (item) => item._id !== action.payload
+        ),
+      };
+    case "admission/pending":
+      return {
+        ...state,
+        admission: true,
+      };
+    case "ADMISSION":
+      return {
+        ...state,
+        admission: false,
+        materials: state.materials.map((admission) => {
+          if (admission._id === action.payload.materials._id) {
+            return action.payload.materials;
+          }
+          return admission;
+        }),
+      };
+    case "admission/rejected":
+      return {
+        ...state,
+        admission: false,
         error: action.error,
+      };
+    case "EDIT":
+      return {
+        ...state,
+        editing: false,
+        materials: state.materials.map((edit) => {
+          if (edit._id === action.payload.materials._id) {
+            return action.payload.materials;
+          }
+          return edit;
+        }),
       };
     default:
       return state;
   }
-};
-
-export const loadMaterial = () => {
-  return async (dispatch) => {
-    try {
-      const res = await fetch("http://localhost:3003/materials", {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-      });
-      const json = await res.json();
-      if (res.ok) {
-        dispatch({ type: "MATERIALS_LOAD/FULFILLED", payload: json });
-        }
-    } catch (e) {
-      dispatch({ type: "MATERIALS_LOAD/REJECTED", error: e.message() });
-    }
-  };
 };

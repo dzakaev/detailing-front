@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import ExpensesPage from "./Pages/Expenses/ExpensesPage";
 import JournalPage from "./Pages/JournalPage/JournalPage";
 import ClientPage from "./Pages/ClientPage";
+import ReportPage from './Pages/Report/ReportPage';
 
 function App() {
 
@@ -25,8 +26,12 @@ function App() {
         element={!token ? <Navigate to="/signIn" /> : <ClientPage />}
       />
       <Route
+        path="/report"
+        element={!token ? <Navigate to="/signIn" /> : <ReportPage />}
+      />
+      <Route
         path="/signIn"
-        element={token ? <Navigate to="/" /> : <SignInPage />}
+        element={token ? <Navigate to="/journal" /> : <SignInPage />}
       />
       <Route
         path="/"
