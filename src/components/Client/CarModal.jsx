@@ -62,6 +62,7 @@ const CarModal = () => {
     setOpen(false);
   };
 
+
   const {
     register,
     handleSubmit,
@@ -70,7 +71,6 @@ const CarModal = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
 
   const handleAddClient = ({ firstName, lastName, phone, vin }) => {
     dispatch(addClient({ firstName, lastName, phone, vin })).then(() =>
