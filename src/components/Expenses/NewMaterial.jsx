@@ -9,59 +9,45 @@ import Slide from "@mui/material/Slide";
 import { TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { newMaterial } from "../../redux/actions/materialActions";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { currencies, schema } from "../../constants";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const currencies = [
-  {
-    value: null,
-  },
-  {
-    value: "шт",
-    label: "шт",
-  },
-  {
-    value: "кг",
-    label: "кг",
-  },
-  {
-    value: "л",
-    label: "л",
-  },
-];
 export default function NewMaterial() {
-  const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [volumeType, setVolumeType] = React.useState("");
-  const [price, setPrice] = React.useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const dispatch = useDispatch();
+  const [open, setOpen] = React.useState(false);
 
   const adding = useSelector((state) => state.materialReducer.adding);
+
+  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleName = (e) => {
-    setName(e.target.value);
-  };
-  const handleVolumeType = (e) => {
-    setVolumeType(e.target.value);
-  };
-  const handlePrice = (e) => {
-    setPrice(e.target.value);
-  };
-
-  const addNewMaterial = (e) => {
-    e.preventDefault()
-    dispatch(newMaterial({ name, volumeType, price }));
+  const addNewMaterial = ({ name, volumeType, price }) => {
+    dispatch(newMaterial({ name, volumeType, price })).then(() => setOpen(false));
+    reset({
+      name: "",
+      price: "",
+      volumeType: "",
+    });
   };
 
   const addButton = {
@@ -92,69 +78,79 @@ export default function NewMaterial() {
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             <div style={{ textAlign: "center" }}>
-              <TextField
-                id="outlined-basic"
-                label="Наименование"
-                variant="outlined"
-                style={nameInput}
-                onChange={handleName}
-              />
-              <TextField
-                id="outlined-basic"
-                label="Цена"
-                variant="outlined"
-                type="number"
-                style={{ width: 150, marginTop: 15, marginRight: 10 }}
-                onChange={handlePrice}
-              />
-              {/*<TextField*/}
-              {/*  id="outlined-basic"*/}
-              {/*  label="Кол-во"*/}
-              {/*  variant="outlined"*/}
-              {/*  type="number"*/}
-              {/*  style={{ width: 100, marginTop: 15, marginRight: 10 }}*/}
-              {/*  // onChange={handle}*/}
-              {/*/>*/}
-              <TextField
-                id="outlined-select-currency-native"
-                select
-                label="Ед"
-                style={{ width: 80, marginTop: 15 }}
-                onChange={handleVolumeType}
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                {currencies?.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
+              <form onSubmit={handleSubmit(addNewMaterial)}>
+                <TextField
+                  id="outlined-basic"
+                  label="Наименование"
+                  name="name"
+                  variant="outlined"
+                  style={nameInput}
+                  helperText={errors.name && errors.name.message}
+                  error={!!errors.name}
+                  {...register("name")}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Цена"
+                  name="price"
+                  variant="outlined"
+                  type="number"
+                  style={{ width: 150, marginTop: 15, marginRight: 10 }}
+                  helperText={errors.price && errors.price.message}
+                  error={!!errors.price}
+                  {...register("price")}
+                />
+                <TextField
+                  id="outlined-select-currency-native"
+                  select
+                  label="Ед"
+                  name="volumeType"
+                  style={{ width: 80, marginTop: 15 }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  helperText={errors.volumeType && errors.volumeType.message}
+                  error={!!errors.volumeType}
+                  {...register("volumeType")}
+                >
+                  {currencies.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+                <div
+                  style={{
+                    margin: "auto",
+                    marginTop: 20,
+                    width: 230,
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <LoadingButton
+                    style={{ backgroundColor: "orange" }}
+                    type="submit"
+                    loading={adding}
+                    variant="contained"
+                  >
+                    {" "}
+                    Добавить{" "}
+                  </LoadingButton>
+                  <Button
+                    style={{ backgroundColor: "orange" }}
+                    variant="contained"
+                    color="primary"
+                    onClick={handleClose}
+                  >
+                    Закрыть
+                  </Button>
+                </div>
+              </form>
             </div>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button
-            style={{ backgroundColor: "orange" }}
-            variant="contained"
-            color="primary"
-            onClick={handleClose}
-          >
-            Закрыть
-          </Button>
-          <Button
-            style={{ backgroundColor: "orange" }}
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={adding}
-            onClick={addNewMaterial}
-          >
-            {" "}
-            Добавить
-          </Button>
-        </DialogActions>
+        <DialogActions></DialogActions>
       </Dialog>
     </div>
   );

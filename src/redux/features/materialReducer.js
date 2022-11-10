@@ -2,7 +2,6 @@ const initialState = {
   materials: [],
   loading: false,
   adding: false,
-  deleting: false,
   editing: false,
   admission: false,
 };
@@ -29,8 +28,16 @@ export const materialReducer = (state = initialState, action) => {
     case "delete_material/pending":
       return {
         ...state,
-        deleting: true,
-      };
+        materials: state.materials.map(item => {
+          if (item._id === action.payload) {
+            return {
+              ...item,
+              deleting: true
+            }
+          }
+          return item
+        })
+      }
     case "DELETE_MATERIAL/fulfilled":
       return {
         ...state,
@@ -48,19 +55,19 @@ export const materialReducer = (state = initialState, action) => {
       return {
         ...state,
         admission: false,
-        materials: state.materials.map((admission) => {
-          if (admission._id === action.payload.materials._id) {
-            return action.payload.materials;
-          }
-          return admission;
-        }),
-      };
+        materials: [action.payload.material, ...state.materials]
+      }
     case "admission/rejected":
       return {
         ...state,
         admission: false,
         error: action.error,
       };
+    case "edit/pending":
+      return {
+        ...state,
+        editing: true
+      }
     case "EDIT":
       return {
         ...state,

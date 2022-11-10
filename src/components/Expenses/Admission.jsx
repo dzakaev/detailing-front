@@ -16,7 +16,7 @@ export default function AdmissionModal({ materialId }) {
 
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-  const [vol, setVol] = React.useState(0);
+  const [volume, setVolume] = React.useState(0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -27,10 +27,10 @@ export default function AdmissionModal({ materialId }) {
   };
 
   const handleChangeVolume = (e) => {
-    setVol(e.target.value);
+    setVolume(e.target.value);
   };
 
-  const admissionButton = (id, volume) => {
+  const admissionButton = (id) => {
     dispatch(admission(id, volume));
   };
 
@@ -55,7 +55,7 @@ export default function AdmissionModal({ materialId }) {
               label="Кол-во"
               variant="outlined"
               type="number"
-              value={vol}
+              value={volume}
               onChange={handleChangeVolume}
               style={{ width: 100, marginTop: 15, marginRight: 10 }}
             />
@@ -64,8 +64,11 @@ export default function AdmissionModal({ materialId }) {
         <DialogActions>
           {filtered.map((item) => {
             return (
-              <Button disabled={admiss} onClick={() => admissionButton(item._id)}>
-                {admiss ? "загрузка" :  "Добавить"}
+              <Button
+                disabled={admiss}
+                onClick={() => admissionButton(item._id)}
+              >
+                {admiss ? "загрузка" : "Добавить"}
               </Button>
             );
           })}

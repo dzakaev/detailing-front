@@ -13,7 +13,6 @@ const SignInPage = () => {
   const signingIn = useSelector((state) => state.application.signingIn);
   const error = useSelector((state) => state.application.error);
 
-
   const handleChangeLogin = (e) => {
     setLogin(e.target.value);
   };

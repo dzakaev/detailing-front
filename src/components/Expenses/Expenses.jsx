@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  Button,
   Paper,
   Table,
   TableBody,
@@ -15,7 +14,6 @@ import Container from "@mui/material/Container";
 import css from "./expenses.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-
 import NewMaterial from "./NewMaterial";
 import AdmissionModal from "./Admission";
 import {
@@ -23,11 +21,12 @@ import {
   loadMaterial,
 } from "../../redux/actions/materialActions";
 import Edit from "./Edit";
+import LoadingButton from "@mui/lab/LoadingButton";
+import BasicDateRangePicker from "../Report/DatePicker";
 
 export default function Expenses() {
   const materials = useSelector((state) => state.materialReducer.materials);
   const loading = useSelector((state) => state.materialReducer.loading);
-  const deleting = useSelector((state) => state.materialReducer.deleting);
   const [search, setSearch] = React.useState("");
 
   const dispatch = useDispatch();
@@ -41,7 +40,6 @@ export default function Expenses() {
   };
 
   const searchInputStyle = { width: 400 };
-  const dateFormStyle = { width: 200 };
 
   const filtered = materials.filter((element) => {
     return element.name.toLowerCase().includes(search.toLowerCase());
@@ -49,6 +47,7 @@ export default function Expenses() {
 
   return (
     <>
+
       {loading ? (
         "Загрузка"
       ) : (
@@ -62,16 +61,7 @@ export default function Expenses() {
                 style={searchInputStyle}
                 onChange={(event) => setSearch(event.target.value)}
               />
-              <TextField
-                id="date"
-                label="Дата"
-                type="date"
-                defaultValue="2020-04-05"
-                style={dateFormStyle}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+            <BasicDateRangePicker/>
               <NewMaterial />
             </Box>
             <Box className={css.content}>
@@ -126,21 +116,25 @@ export default function Expenses() {
                           {row.volumeType}
                         </TableCell>
                         <TableCell align="right">
-                          {row.direction.date}
+                          {row.direction.map((item) => item.date)}
                         </TableCell>
                         <TableCell align="right">
-                          <Edit materialId={row._id} />
+                          <Edit
+                            materialId={row._id}
+                            first={row.name}
+                            second={row.price}
+                          />
                         </TableCell>
                         <TableCell align="right">
-                          <Button
+                          <LoadingButton
                             variant="contained"
                             color="primary"
-                            disabled={deleting}
+                            loading={row.deleting}
                             style={{ background: "orange", fontSize: 8 }}
                             onClick={() => handleDeleteMaterial(row._id)}
                           >
                             удалить
-                          </Button>
+                          </LoadingButton>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -32,7 +32,7 @@ export const newMaterial = ({ name, volumeType, price }) => {
     dispatch({ type: "NEW_MATERIAL/fulfilled", payload: json });
   };
 };
-
+//
 export const deleteMaterial = (id) => {
   return async (dispatch) => {
     dispatch({ type: "delete_material/pending" });
@@ -45,7 +45,7 @@ export const deleteMaterial = (id) => {
     dispatch({ type: "DELETE_MATERIAL/fulfilled", payload: id });
   };
 };
-
+//
 export const admission = (id, volume) => {
   return async (dispatch) => {
     dispatch({ type: "admission/pending", payload: id });
@@ -54,14 +54,13 @@ export const admission = (id, volume) => {
         `http://localhost:3003/materials/${id}/admission`,
         {
           method: "POST",
-          body: JSON.stringify({volume: Number(volume)}),
+          body: JSON.stringify({volume: Number(volume) }),
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      console.log(volume)
       const json = await res.json();
       dispatch({ type: "ADMISSION/fulfilled", payload: json });
     } catch (e) {

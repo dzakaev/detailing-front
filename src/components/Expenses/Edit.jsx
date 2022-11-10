@@ -8,14 +8,15 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { TextField } from "@mui/material";
 import { editMaterial } from "../../redux/actions/materialActions";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-export default function Edit({ materialId }) {
-  const materials = useSelector((state) => state.materialReducer.materials);
+
+export default function Edit({ materialId, first, second}) {
   const editing = useSelector((state) => state.materialReducer.editing);
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [price, setPrice] = React.useState("");
+  const [name, setName] = React.useState(first);
+  const [price, setPrice] = React.useState(second);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -27,6 +28,7 @@ export default function Edit({ materialId }) {
 
   const handleChangeName = (e) => {
     setName(e.target.value);
+
   };
 
   const handleChangePrice = (e) => {
@@ -34,10 +36,8 @@ export default function Edit({ materialId }) {
   };
 
   const saveChange = (id) => {
-    dispatch(editMaterial(id, name, price));
+    dispatch(editMaterial(id, name, price)).then(() => setOpen(false));
   };
-
-  const filtered = materials.filter((elem) => elem._id === materialId);
 
   return (
     <div>
@@ -58,39 +58,36 @@ export default function Edit({ materialId }) {
         <DialogTitle id="alert-dialog-title">Редактирование</DialogTitle>
         <DialogContent style={{ margin: "auto" }}>
           <DialogContentText id="alert-dialog-description">
-            <TextField
-              id="outlined-basic"
-              label="Наименование"
-              variant="outlined"
-              type="text"
-              value={name}
-              onChange={handleChangeName}
-              style={{ width: 200, marginTop: 15, marginRight: 10 }}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Цена"
-              variant="outlined"
-              type="number"
-              value={price}
-              onChange={handleChangePrice}
-              style={{ width: 100, marginTop: 15, marginRight: 10 }}
-            />
+                  <TextField
+                    id="outlined-basic"
+                    label="Наименование"
+                    variant="outlined"
+                    type="text"
+                    value={name}
+                    onChange={handleChangeName}
+                    style={{ width: 200, marginTop: 15, marginRight: 10 }}
+                  />
+                  <TextField
+                    id="outlined-basic"
+                    label="Цена"
+                    variant="outlined"
+                    type="number"
+                    value={price}
+                    onChange={handleChangePrice}
+                    style={{ width: 100, marginTop: 15, marginRight: 10 }}
+                  />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          {filtered.map((item) => {
-            return (
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={editing}
-                onClick={() => saveChange(item._id)}
-              >
-                Сохранить
-              </Button>
-            );
-          })}
+          <LoadingButton
+            variant="contained"
+            color="primary"
+            loading={editing}
+            style={{ backgroundColor: "orange" }}
+            onClick={() => saveChange(materialId)}
+          >
+            Сохранить
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>
